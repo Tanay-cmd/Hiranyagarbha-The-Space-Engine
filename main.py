@@ -1,4 +1,5 @@
 import pygame
+<<<<<<< HEAD
 from game_setup import *
 from objects import *
 # Pygame initialization
@@ -57,4 +58,84 @@ while run:
     # Clocking the framerate, loop can run only 60 times per second
     clock.tick(FrameRate)
 
+=======
+#pygame initlalizatio
+pygame.init()
+
+#game setup
+WIDTH, HEIGHT = 1000, 800
+SCREEN = pygame.display.set_mode((WIDTH, HEIGHT))
+clock = pygame.time.Clock()
+FrameRate = 60
+
+#constants
+AU = 149.6e9*1000
+SCALE = 250/AU
+G = 6.67428e-11  
+TIMESTEP = 3600*640000
+
+#blue print for the planets
+class planets:
+    def __init__(self, position,  radius, mass, color, intial_vel):
+        self.position = pygame.math.Vector2(position)
+        self.velocity = pygame.math.Vector2(intial_vel)
+        self.radius = radius
+        self.mass = mass
+        self.color = color
+
+    #outputs a force vector between 2 bodies
+    def attraction(self, other):
+        dist_vect = other.position - self.position
+        distance = dist_vect.length()
+        if distance == 0:
+            return pygame.math.Vector2(0, 0)
+        force = (G * self.mass * other.mass)/distance**2
+        force_vector = force * dist_vect.normalize()
+        return force_vector
+    
+    #calculats the total force due to each planet on each planet, one at a time 
+    #and updates the position
+    def update(self):
+        total_force = pygame.math.Vector2(0, 0)
+        for planet in planets:
+            total_force += self.attraction(planet)
+        self.accleration = total_force/self.mass
+        self.velocity += self.accleration * TIMESTEP 
+        self.position += self.velocity * TIMESTEP
+        self.draw()
+ 
+  #drawing method
+    def draw(self):
+        # x and y are adjusted to the center of the screen
+        x = (self.position.x * SCALE + WIDTH / 2 - self.radius)
+        y = (self.position.y * SCALE + HEIGHT / 2 - self.radius)
+        pygame.draw.ellipse(SCREEN, self.color, (x, y, self.radius * 2, self.radius * 2))
+
+
+#intializing the objects
+sun = planets((0, 0), 50, 1.989e30, 'YELLOW', (0, 0))
+earth = planets((AU, 0), 10, 5.972e24, 'BLUE', (0, 800))
+planets = [sun, earth]
+
+#basic game loop begins here./
+run = True
+while run:
+
+    #below is event handler
+    for event in pygame.event.get():
+        if (event.type == pygame.QUIT):
+            run = False
+
+    #filling the screen with black color
+    SCREEN.fill('black')
+
+    for planet in planets:
+        planet.update()
+
+
+    pygame.display.update()
+
+    #clocking the framerate, loop can run only 60 times per seconds
+    clock.tick(FrameRate)
+>>>>>>> 0dd0b288af48a82e92eb225fa969faf5017bdff1
 pygame.quit()

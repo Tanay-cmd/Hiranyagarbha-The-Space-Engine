@@ -5,4 +5,4 @@ FrameRate = 60
 AU = 149.6e9  # in meters
 SCALE = 250 / AU  # Scale factor for display
 G = 6.67428e-11  # Gravitational constant
-TIMESTEP = 3600 * 12  # Half a day in seconds
+TIMESTEP = 3600 * 6  # Half a day in seconds

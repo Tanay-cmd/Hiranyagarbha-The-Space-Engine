@@ -2,20 +2,23 @@ import pygame
 from game_setup import *
 pygame.init()
 
+font = pygame.font.Font(None, 20)
+
 class Planet:
-    def __init__(self, position, radius, mass, color, vel_vect, SCREEN, is_Human):
+    def __init__(self, position, radius, mass, color, vel_vect, SCREEN, is_sun):
         self.position = pygame.math.Vector2(position)
         self.velocity = pygame.math.Vector2(vel_vect)
         self.radius = radius
         self.mass = mass
         self.color = color
         self.screen = SCREEN
-        self.is_Human = is_Human
+        self.is_sun = is_sun
         
     # Outputs a force vector between 2 bodies
     def attraction(self, other):
         dist_vect = other.position - self.position
         distance = dist_vect.length()
+        self.display_distance(other, distance)
         if distance == 0:
             return pygame.math.Vector2(0, 0)
         force = (G * self.mass * other.mass) / distance**2
@@ -33,6 +36,12 @@ class Planet:
         self.velocity += acceleration * TIMESTEP
         self.position += self.velocity * TIMESTEP
         self.draw()
+
+
+    def display_distance(self, other, distance):
+        if self.is_sun == False and other.is_sun == True:
+            text_surface = font.render(f"{round(distance/AU, 3)} AU", False, (255, 255, 255))
+            self.screen.blit(text_surface, (self.position.x * SCALE + WIDTH / 2 - self.radius, self.position.y * SCALE + HEIGHT / 2 - self.radius + 30))
 
     # Drawing method
     def draw(self):
